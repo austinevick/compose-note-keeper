@@ -6,6 +6,7 @@ import com.austinevick.noteapp.data.NoteDao
 import com.austinevick.noteapp.data.NoteDatabase
 import com.austinevick.noteapp.data.NoteRepository
 import com.austinevick.noteapp.data.NoteRepositoryImpl
+import com.austinevick.noteapp.preference.NotePreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,6 +37,12 @@ object AppModule {
     fun provideNoteRepository(noteDao: NoteDao): NoteRepository{
         return NoteRepositoryImpl(noteDao)
     }
+
+    @Singleton
+    @Provides
+    fun provideNotePreferences(@ApplicationContext context: Context) = NotePreferences(context)
+
+
 
 }
 

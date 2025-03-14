@@ -20,5 +20,6 @@ data class NoteState(
     val content: String = "",
     val color: String = "#059200",
     var isPinned: Boolean = false,
+    var isLocked: Boolean = false,
     var isArchived: Boolean = false
 )

@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -41,7 +42,10 @@ import com.austinevick.noteapp.R
 import com.austinevick.noteapp.theme.Green
 import com.austinevick.noteapp.ui.composable.ConfirmDeleteModal
 import com.austinevick.noteapp.ui.composable.InputField
+import com.austinevick.noteapp.ui.composable.SetPasscodeModal
 import com.austinevick.noteapp.ui.viewmodel.EditNoteViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,8 +57,11 @@ fun EditNoteScreen(
 ) {
 
     val noteState = viewModel.noteUiState.collectAsState()
+    val hasPasscode = viewModel.hasPasscode.collectAsState()
     val noteActionState = viewModel.noteActionState.collectAsStateWithLifecycle().value
     val showDeleteDialog = remember { mutableStateOf(false) }
+    val showPasscodeDialog = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -96,6 +103,23 @@ fun EditNoteScreen(
                         Icon(
                             painterResource(R.drawable.delete_outline),
                             null,tint = Green,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                    IconButton(onClick = {
+                        if(hasPasscode.value){
+                            showPasscodeDialog.value = true
+
+                        }else{
+                            viewModel.lockNote()
+                        }
+                    }) {
+                        Icon(
+                            painterResource(
+                                if (noteState.value.isLocked) R.drawable.lock else
+                                    R.drawable.lock_open
+                            ),
+                            null, tint = Green,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -167,6 +191,11 @@ fun EditNoteScreen(
                         viewModel.deleteNote()
                         navController.popBackStack()
                     })
+            }
+            if(showPasscodeDialog.value){
+                SetPasscodeModal(
+                    onDismiss = {showPasscodeDialog.value = false}
+                )
             }
 
         }

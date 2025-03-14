@@ -8,6 +8,7 @@ import com.austinevick.noteapp.core.NoteActionState
 import com.austinevick.noteapp.core.NoteState
 import com.austinevick.noteapp.data.NoteEntity
 import com.austinevick.noteapp.data.NoteRepository
+import com.austinevick.noteapp.preference.NotePreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -18,19 +19,38 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditNoteViewModel @Inject constructor(
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    private val notePreferences: NotePreferences
 ) : ViewModel() {
 
     private val _noteActionState = MutableStateFlow(NoteActionState())
     val noteActionState = _noteActionState
 
+    private  val _hasPasscode = MutableStateFlow(false)
+    val hasPasscode = _hasPasscode
+
     var noteUiState = MutableStateFlow(NoteState())
         private set
+
+
+    init {
+        viewModelScope.launch {
+            notePreferences.getFromDataStore.collect { value ->
+               _hasPasscode.value = value.isEmpty()
+                Log.d("Passcode", value)
+            }
+        }
+    }
 
 
     fun pinNote() {
         noteUiState.value = noteUiState.value
             .copy(isPinned = !noteUiState.value.isPinned)
+    }
+
+    fun lockNote() {
+        noteUiState.value = noteUiState.value
+            .copy(isLocked = !noteUiState.value.isLocked)
     }
 
     fun archiveNote() {
@@ -61,6 +81,7 @@ class EditNoteViewModel @Inject constructor(
                         content = it.content,
                         color = it.color,
                         isPinned = it.isPinned,
+                        isLocked = it.isLocked,
                         isArchived = it.isArchived
                     )
                 }
@@ -92,7 +113,8 @@ class EditNoteViewModel @Inject constructor(
                     content = noteUiState.value.content,
                     color = noteUiState.value.color,
                     isPinned = noteUiState.value.isPinned,
-                    isArchived = noteUiState.value.isArchived
+                    isArchived = noteUiState.value.isArchived,
+                    isLocked = noteUiState.value.isLocked
                 )
                 if (note.title.isBlank() && note.content.isBlank()) {
                     _noteActionState.update {
@@ -118,7 +140,8 @@ class EditNoteViewModel @Inject constructor(
                 content = noteUiState.value.content,
                 color = noteUiState.value.color,
                 isPinned = noteUiState.value.isPinned,
-                isArchived = noteUiState.value.isArchived
+                isArchived = noteUiState.value.isArchived,
+                isLocked = noteUiState.value.isLocked
             )
             try {
                 if (note.title.isBlank() && note.content.isBlank()) {

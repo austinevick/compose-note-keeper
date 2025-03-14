@@ -119,7 +119,7 @@ fun HomeScreen(
                 UiState.None -> {}
                 is UiState.Success -> {
                     if (uiState.data.isEmpty())
-                        EmptyWidget(R.drawable.note, "No Notes Added, tap + to add a note")
+                        EmptyWidget(R.drawable.note, "No Notes Added")
                     else
                     uiState.data.map { note ->
                         NoteCard(

@@ -11,6 +11,7 @@ data class NoteEntity(
     val content: String,
     val color: String = "#059200",
     val isArchived: Boolean,
+    val isLocked: Boolean,
     val isPinned: Boolean,
     val date: Long = System.currentTimeMillis()
 )

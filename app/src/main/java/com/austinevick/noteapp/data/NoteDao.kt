@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
-    @Query("SELECT * FROM notes WHERE isArchived = 0 ORDER BY isPinned DESC")
+    @Query("SELECT * FROM notes WHERE isArchived = 0 AND isLocked = 0 ORDER BY isPinned DESC")
     fun getNotes(): Flow<List<NoteEntity>>
 
     @Query("SELECT * FROM notes WHERE isArchived = 1")
