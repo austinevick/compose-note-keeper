@@ -1,6 +1,6 @@
 package com.austinevick.noteapp.ui.composable
 
-import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +17,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -26,29 +27,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.austinevick.noteapp.theme.Green
-import com.austinevick.noteapp.ui.ConfirmPasscodeModal
 import com.austinevick.noteapp.ui.CreatePasscodeModal
 import com.austinevick.noteapp.ui.viewmodel.PasscodeViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetPasscodeModal(
-
+    viewModel: PasscodeViewModel = hiltViewModel(),
     onDismiss: () -> Unit
 ) {
     val showModal = remember { mutableStateOf(false) }
     val showDialog = remember { mutableStateOf(false) }
-    val passcode = remember { mutableStateOf("") }
-    val confirmPasscode = remember { mutableStateOf("") }
+    val passcode = viewModel.passcode.collectAsState()
+    val confirmPasscode = viewModel.confirmPasscode.collectAsState()
+    val scope = rememberCoroutineScope()
 
 
-    LaunchedEffect(passcode.value, confirmPasscode.value) {
+
+    LaunchedEffect(passcode.value, showModal.value, confirmPasscode.value) {
         if (confirmPasscode.value.length == 4) {
             if (passcode.value == confirmPasscode.value) {
                 showDialog.value = true
+                viewModel.savePasscode(passcode.value)
+                viewModel.setPasscode("")
+                viewModel.setConfirmPasscode("")
+            }
+            if (showDialog.value) {
+                scope.launch {
+                    delay(2000)
+                    showDialog.value = false
+                    onDismiss()
+                }
             }
         }
     }
@@ -59,28 +72,38 @@ fun SetPasscodeModal(
         containerColor = Color.White,
         onDismissRequest = onDismiss
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
-            Text(text = "Set a passcode to protect your notes",
-                fontWeight = FontWeight.W600)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+        ) {
+
+            Text(
+                text = "Set a passcode to protect your notes",
+                fontWeight = FontWeight.W600
+            )
             HorizontalDivider(
-                modifier = Modifier.padding(vertical =  16.dp))
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
             Row(
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()) {
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
                     border = BorderStroke(1.dp, Color.Gray.copy(alpha = 0.2f)),
-                    onClick = onDismiss) {
-                    Text(text = "Cancel",color = Green)
+                    onClick = onDismiss
+                ) {
+                    Text(text = "Cancel", color = Green)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
                     border = BorderStroke(1.dp, Color.Gray.copy(alpha = 0.2f)),
                     onClick = {
-                    showModal.value = true
-                }) {
+                        showModal.value = true
+                    }) {
                     Text(text = "Create Passcode", color = Green)
                 }
             }
@@ -88,12 +111,13 @@ fun SetPasscodeModal(
             if (showModal.value) {
                 CreatePasscodeModal(
                     passcode = passcode.value,
-                    onConfirmPass = { confirmPasscode.value = it },
-                    onConfirm = { passcode.value = it },
+                    onConfirmPass = viewModel::setConfirmPasscode,
+                    onConfirm = viewModel::setPasscode,
                     onDismiss = {
                         onDismiss()
                         showModal.value = false
-                    }) }
+                    })
+            }
 
             if (showDialog.value) {
                 SuccessDialog(onDismiss = {

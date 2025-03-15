@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun EmptyWidget(image: Int, text: String) {
     Column(modifier = Modifier.fillMaxSize()
-        .padding(top = 150.dp),
+        .padding(top = 250.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Image(painterResource(image), null,

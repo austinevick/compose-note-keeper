@@ -14,6 +14,9 @@ interface NoteDao {
     @Query("SELECT * FROM notes WHERE isArchived = 0 AND isLocked = 0 ORDER BY isPinned DESC")
     fun getNotes(): Flow<List<NoteEntity>>
 
+    @Query("SELECT * FROM notes WHERE isLocked = 1")
+    fun getLockedNotes(): Flow<List<NoteEntity>>
+
     @Query("SELECT * FROM notes WHERE isArchived = 1")
     fun getArchivedNotes(): Flow<List<NoteEntity>>
 

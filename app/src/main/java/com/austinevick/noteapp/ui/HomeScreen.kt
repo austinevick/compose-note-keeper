@@ -52,13 +52,9 @@ fun HomeScreen(
     val uiState = viewModel.noteListState.collectAsStateWithLifecycle().value
     val noteActionState = viewModel.noteActionState.collectAsStateWithLifecycle().value
 
-    val searchText = remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
 
 
-    if (noteActionState.message != null) LaunchedEffect(noteActionState) {
-        snackbarHostState.showSnackbar(noteActionState.message)
-    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -83,6 +79,15 @@ fun HomeScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = {
+                        navController.navigate(Routes.PasscodeScreen.route)
+                    }) {
+                        Icon(
+                            painterResource(R.drawable.lock), null,
+                            modifier = Modifier.size(28.dp),
+                            tint = Green
+                        )
+                    }
                     IconButton(onClick = {
                         navController.navigate(Routes.ArchivedScreen.route)
                     }) {
@@ -119,7 +124,7 @@ fun HomeScreen(
                 UiState.None -> {}
                 is UiState.Success -> {
                     if (uiState.data.isEmpty())
-                        EmptyWidget(R.drawable.note, "No Notes Added")
+                        EmptyWidget(R.drawable.folder_open, "No Notes Added")
                     else
                     uiState.data.map { note ->
                         NoteCard(

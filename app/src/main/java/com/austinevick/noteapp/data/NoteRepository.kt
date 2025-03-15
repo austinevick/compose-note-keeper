@@ -6,6 +6,7 @@ import javax.inject.Inject
 interface NoteRepository {
     fun getNotesSortedByPinned(): Flow<List<NoteEntity>>
     fun getNotes(): Flow<List<NoteEntity>>
+    fun getLockedNotes(): Flow<List<NoteEntity>>
     fun getArchivedNotes(): Flow<List<NoteEntity>>
     fun getPinnedNotes(): Flow<List<NoteEntity>>
     fun getNoteById(id: Int): Flow<NoteEntity>
@@ -29,6 +30,10 @@ class NoteRepositoryImpl @Inject constructor(private val noteDao: NoteDao) : Not
         return noteDao.getNotes()
     }
 
+    override fun getLockedNotes(): Flow<List<NoteEntity>> {
+        return noteDao.getLockedNotes()
+    }
+
     override fun getArchivedNotes(): Flow<List<NoteEntity>> {
         return noteDao.getArchivedNotes()
     }
@@ -36,6 +41,7 @@ class NoteRepositoryImpl @Inject constructor(private val noteDao: NoteDao) : Not
     override fun getPinnedNotes(): Flow<List<NoteEntity>> {
         return noteDao.getPinnedNotes()
     }
+
     override fun getNoteById(id: Int): Flow<NoteEntity> {
         return noteDao.getNoteById(id)
     }

@@ -31,6 +31,9 @@ class MainViewModel @Inject constructor(
         MutableStateFlow<UiState<List<NoteEntity>>>(UiState.Loading)
     val archivedNoteListState = _archivedNoteListState
 
+    private val _lockedNoteListState = MutableStateFlow<UiState<List<NoteEntity>>>(UiState.Loading)
+    val lockedNoteListState = _lockedNoteListState
+
     private val _noteActionState = MutableStateFlow(NoteActionState())
     val noteActionState = _noteActionState
 
@@ -41,6 +44,7 @@ class MainViewModel @Inject constructor(
     init {
         getNotes()
         getArchivedNotes()
+        getLockedNotes()
     }
 
 
@@ -52,6 +56,18 @@ class MainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _noteListState.value = UiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    private fun getLockedNotes(){
+        viewModelScope.launch {
+            try {
+                noteRepository.getLockedNotes().collect{notes ->
+                    _lockedNoteListState.value = UiState.Success(notes)
+                }
+            }catch (e: Exception){
+                _lockedNoteListState.value = UiState.Error(e.message ?: "Unknown error")
             }
         }
     }

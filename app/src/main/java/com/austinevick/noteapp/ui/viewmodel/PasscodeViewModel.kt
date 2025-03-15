@@ -1,38 +1,63 @@
 package com.austinevick.noteapp.ui.viewmodel
 
-import android.os.Build
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.austinevick.noteapp.preference.NotePreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PasscodeViewModel @Inject constructor() : ViewModel() {
+class PasscodeViewModel @Inject constructor(
+    private val application: Application,
+    private val preferences: NotePreferences
+) : ViewModel() {
 
-    val digits = 4
+
     var passcode = MutableStateFlow("")
         private set
+    var confirmPasscode = MutableStateFlow("")
+        private set
+    var errorMessage = MutableStateFlow("")
+        private set
+
+    private val _savedPasscode = MutableStateFlow("")
+    val savedPasscode = _savedPasscode
 
 
-    fun onButtonClick(i: Int) {
-        when (i) {
-            11 -> {
-                // Delete passcode starting from the last digit
-                if (passcode.value.isNotBlank())
-                    passcode.value = passcode.value.substring(0, passcode.value.length - 1)
-            }
+    init {
+        getPasscode()
+    }
 
-            10 -> {
-                if (passcode.value.length == digits) return
-                passcode.value += (0).toString()
-            }
+    fun savePasscode(passcode: String) {
+        viewModelScope.launch {
+            preferences.saveToDataStore(application, passcode)
+        }
+    }
 
-            else -> {
-                if (passcode.value.length == digits) return
-                passcode.value += (i + 1).toString()
+    fun getPasscode() {
+        viewModelScope.launch {
+            preferences.getFromDataStore.collect {
+                _savedPasscode.value = it
             }
         }
+    }
+
+
+    fun setPasscode(newPasscode: String) {
+        passcode.value = newPasscode
+    }
+
+    fun setConfirmPasscode(newPasscode: String) {
+        confirmPasscode.value = newPasscode
+    }
+
+    fun setErrorMessage(newMessage: String) {
+        errorMessage.value = newMessage
+        Log.d("error", errorMessage.value)
     }
 
 }

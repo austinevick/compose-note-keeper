@@ -4,5 +4,7 @@ enum class Routes(val route: String) {
     HomeScreen("home"),
     EditNoteScreen("edit_note"),
     ArchivedScreen("archived"),
-    SearchScreen("search")
+    SearchScreen("search"),
+    PasscodeScreen("passcode"),
+    LockedNoteScreen("locked_note"),
 }
