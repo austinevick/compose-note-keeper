@@ -4,6 +4,7 @@
 - Archive note
 - Pin note
 - Search notes
+- Lock notes with passcode
 
 ### Architecture and dependencies
 - MVVM architecture
