@@ -1,6 +1,5 @@
 package com.austinevick.noteapp.ui.composable
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,11 +25,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.austinevick.noteapp.R
+import com.austinevick.noteapp.core.color
 import com.austinevick.noteapp.core.convertLongToDate
 import com.austinevick.noteapp.data.NoteEntity
 import com.austinevick.noteapp.theme.Green
-import com.austinevick.noteapp.R
-import com.austinevick.noteapp.core.color
 
 @Composable
 fun NoteCard(note: NoteEntity, onTap: () -> Unit) {
@@ -55,25 +54,27 @@ fun NoteCard(note: NoteEntity, onTap: () -> Unit) {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
                 if (note.title.isNotEmpty()) Text(text = note.title,
                     maxLines = 1, fontWeight = FontWeight.W600)
-                if (note.isPinned) Icon(painterResource(R.drawable.push_pin),
-                    null)
-            }
+
             if (note.content.isNotEmpty()) Text(text = note.content, maxLines = 3)
             Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                convertLongToDate(note.date),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.W600,
-                color = Color.Gray,
-                style = TextStyle(platformStyle =
-                PlatformTextStyle(includeFontPadding = false))
-            )
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(
+                  convertLongToDate(note.date),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.W600,
+                    color = Color.Gray,
+                    style = TextStyle(
+                        platformStyle =
+                            PlatformTextStyle(includeFontPadding = false)
+                    )
+                )
+              if (note.isPinned)
+                  Icon(painterResource(R.drawable.outline_push_pin),null,
+                  modifier = Modifier.size(20.dp), tint = Green,)
+            }
         }
     }
 

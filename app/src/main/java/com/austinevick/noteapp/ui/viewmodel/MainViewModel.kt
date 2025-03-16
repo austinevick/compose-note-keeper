@@ -11,6 +11,7 @@ import com.austinevick.noteapp.data.NoteEntity
 import com.austinevick.noteapp.data.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -59,6 +60,8 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+
 
     private fun getLockedNotes(){
         viewModelScope.launch {

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
-    @Query("SELECT * FROM notes WHERE isArchived = 0 AND isLocked = 0 ORDER BY isPinned DESC")
+    @Query("SELECT * FROM notes WHERE isArchived = 0 AND isLocked = 0 ORDER BY isPinned DESC , date DESC")
     fun getNotes(): Flow<List<NoteEntity>>
 
     @Query("SELECT * FROM notes WHERE isLocked = 1")
@@ -50,8 +50,6 @@ interface NoteDao {
     @Query("SELECT * FROM notes ORDER BY isPinned DESC")
     fun getNotesSortedByPinned(): Flow<List<NoteEntity>>
 
-    @Query("SELECT * FROM notes WHERE title LIKE '%' || :query || '%' OR content LIKE '%' || :query || '%'")
+    @Query("SELECT * FROM notes WHERE title LIKE '%' || :query || '%' OR content LIKE '%' || :query || '%' AND isLocked = 0 ORDER BY isPinned DESC , date DESC")
     fun searchNotes(query: String): Flow<List<NoteEntity>>
-
-
 }
