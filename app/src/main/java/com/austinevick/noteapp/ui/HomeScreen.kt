@@ -1,6 +1,5 @@
 package com.austinevick.noteapp.ui
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,8 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,20 +37,17 @@ import com.austinevick.noteapp.theme.Green
 import com.austinevick.noteapp.ui.composable.EmptyWidget
 import com.austinevick.noteapp.ui.composable.NoteCard
 import com.austinevick.noteapp.ui.viewmodel.MainViewModel
-import com.google.gson.Gson
+import com.austinevick.noteapp.ui.viewmodel.PasscodeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
 ) {
 
     val uiState = viewModel.noteListState.collectAsStateWithLifecycle().value
-    val noteActionState = viewModel.noteActionState.collectAsStateWithLifecycle().value
-
     val snackbarHostState = remember { SnackbarHostState() }
-
 
 
     Scaffold(
@@ -83,8 +77,8 @@ fun HomeScreen(
                         navController.navigate(Routes.PasscodeScreen.route)
                     }) {
                         Icon(
-                            painterResource(R.drawable.lock), null,
-                            modifier = Modifier.size(28.dp),
+                            painterResource(R.drawable.lock),
+                            null, modifier = Modifier.size(28.dp),
                             tint = Green
                         )
                     }

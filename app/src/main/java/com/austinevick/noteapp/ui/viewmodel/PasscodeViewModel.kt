@@ -2,8 +2,10 @@ package com.austinevick.noteapp.ui.viewmodel
 
 import android.app.Application
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.austinevick.noteapp.BiometricPromptManager
 import com.austinevick.noteapp.preference.NotePreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,9 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PasscodeViewModel @Inject constructor(
     private val application: Application,
-    private val preferences: NotePreferences
+    private val preferences: NotePreferences,
 ) : ViewModel() {
-
 
     var passcode = MutableStateFlow("")
         private set
@@ -59,6 +60,8 @@ class PasscodeViewModel @Inject constructor(
         errorMessage.value = newMessage
         Log.d("error", errorMessage.value)
     }
+
+
 
 }
 

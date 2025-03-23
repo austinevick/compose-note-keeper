@@ -1,18 +1,14 @@
 package com.austinevick.noteapp.ui.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.austinevick.noteapp.core.NoteActionState
-import com.austinevick.noteapp.core.NoteState
 import com.austinevick.noteapp.core.UiState
 import com.austinevick.noteapp.data.NoteEntity
 import com.austinevick.noteapp.data.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -61,15 +57,13 @@ class MainViewModel @Inject constructor(
         }
     }
 
-
-
-    private fun getLockedNotes(){
+    private fun getLockedNotes() {
         viewModelScope.launch {
             try {
-                noteRepository.getLockedNotes().collect{notes ->
+                noteRepository.getLockedNotes().collect { notes ->
                     _lockedNoteListState.value = UiState.Success(notes)
                 }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 _lockedNoteListState.value = UiState.Error(e.message ?: "Unknown error")
             }
         }
@@ -97,25 +91,11 @@ class MainViewModel @Inject constructor(
             try {
                 noteRepository.searchNotes(query).collect { notes ->
                     _searchNoteState.value = UiState.Success(notes)
-                    Log.d("MainViewModel", "searchNotes: $notes")
                 }
             } catch (e: Exception) {
                 _searchNoteState.value = UiState.Error(e.message ?: "Unknown error")
             }
         }
     }
-
-
-    fun archiveNote(note: NoteEntity) {
-        viewModelScope.launch {
-            try {
-                noteRepository.archiveNote(note.id)
-                _noteActionState.value = NoteActionState(message = "Note archived successfully")
-            } catch (e: Exception) {
-                _noteActionState.value = NoteActionState(message = e.message ?: "Unknown error")
-            }
-        }
-    }
-
 
 }

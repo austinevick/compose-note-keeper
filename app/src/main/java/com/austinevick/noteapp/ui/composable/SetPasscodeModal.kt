@@ -1,6 +1,5 @@
 package com.austinevick.noteapp.ui.composable
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,7 +44,6 @@ fun SetPasscodeModal(
     val passcode = viewModel.passcode.collectAsState()
     val confirmPasscode = viewModel.confirmPasscode.collectAsState()
     val scope = rememberCoroutineScope()
-
 
 
     LaunchedEffect(passcode.value, showModal.value, confirmPasscode.value) {

@@ -10,12 +10,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
 class NotePreferences(context: Context) {
-   private val passcodeKey = stringPreferencesKey("passcode_key")
+    private val passcodeKey = stringPreferencesKey("passcode_key")
 
     suspend fun saveToDataStore(context: Context, value: String) {
         context.dataStore.edit { preferences ->
-            preferences[passcodeKey] =value
+            preferences[passcodeKey] = value
         }
     }
 

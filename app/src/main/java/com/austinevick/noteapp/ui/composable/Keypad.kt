@@ -40,6 +40,11 @@ fun Keypad(
                     painter = painterResource(
                         id = R.drawable.keyboard_backspace), null)
             }
+            9 -> {
+                Image(
+                    painter = painterResource(
+                        id = R.drawable.fingerprint), null)
+            }
 
             10 -> {
                 Text(

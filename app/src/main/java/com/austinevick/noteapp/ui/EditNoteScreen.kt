@@ -109,7 +109,6 @@ fun EditNoteScreen(
                     IconButton(onClick = {
                         if(hasPasscode.value){
                             showPasscodeDialog.value = true
-
                         }else{
                             viewModel.lockNote()
                         }

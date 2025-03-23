@@ -1,5 +1,7 @@
 package com.austinevick.noteapp.ui
 
+import androidx.activity.compose.LocalActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.austinevick.noteapp.BiometricPromptManager
 import com.austinevick.noteapp.R
 import com.austinevick.noteapp.navigation.Routes
 import com.austinevick.noteapp.ui.composable.Keypad
@@ -47,18 +50,32 @@ import com.austinevick.noteapp.ui.viewmodel.PasscodeViewModel
 @Composable
 fun PasscodeScreen(
     viewModel: PasscodeViewModel = hiltViewModel(),
-    navController: NavHostController) {
+    navController: NavHostController
+) {
+    val activity = LocalActivity.current as AppCompatActivity
+    val biometricPromptManager = BiometricPromptManager(activity)
+    val isAvailable = biometricPromptManager.biometricState.collectAsState()
+    val biometricResult = biometricPromptManager.promptResult.collectAsState(initial = null)
 
     val passcode = remember { mutableStateOf("") }
     val savedPasscode = viewModel.savedPasscode.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(passcode.value) {
+    LaunchedEffect(passcode.value, biometricResult.value) {
+        biometricPromptManager.checkBiometricState()
+        if (biometricResult.value is BiometricPromptManager
+            .BiometricResult.AuthenticationSuccess
+        ) {
+            navController.navigate(Routes.LockedNoteScreen.route) {
+                popUpTo(Routes.PasscodeScreen.route) {
+                    inclusive = true
+                }
+            }
+        }
         if (passcode.value.length == 4) {
             if (passcode.value == savedPasscode.value) {
-                navController.
-                navigate(Routes.LockedNoteScreen.route){
-                    popUpTo(Routes.PasscodeScreen.route){
+                navController.navigate(Routes.LockedNoteScreen.route) {
+                    popUpTo(Routes.PasscodeScreen.route) {
                         inclusive = true
                     }
                 }
@@ -69,7 +86,8 @@ fun PasscodeScreen(
         }
     }
 
-    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) },
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults
@@ -85,7 +103,7 @@ fun PasscodeScreen(
                 title = { Text(text = "Enter Passcode") })
         }
 
-        )
+    )
     { innerPadding ->
         Column(
             verticalArrangement = Arrangement.Center,
@@ -129,7 +147,15 @@ fun PasscodeScreen(
                             })
                     }
 
-                    9 -> {}
+                    9 -> {
+                        if (isAvailable.value)
+                            Keypad(i, onClick = {
+                                biometricPromptManager.showBiometricPrompt(
+                                    "Authenticate",
+                                    "Please authenticate to continue"
+                                )
+                            })
+                    }
 
                     10 -> {
                         Keypad(i, onClick = {
