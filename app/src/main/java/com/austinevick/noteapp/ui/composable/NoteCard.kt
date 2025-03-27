@@ -1,5 +1,8 @@
 package com.austinevick.noteapp.ui.composable
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,9 +41,16 @@ fun NoteCard(note: NoteEntity, onTap: () -> Unit) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 500,
+                    delayMillis = 100,
+                    easing = LinearOutSlowInEasing
+                ),
+            )
             .clickable { onTap() }
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth()
             .border(
                 BorderStroke(
                     1.dp,

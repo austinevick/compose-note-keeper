@@ -1,8 +1,6 @@
 package com.austinevick.noteapp
 
-import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
@@ -12,10 +10,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
-import javax.inject.Inject
 
-class BiometricPromptManager @Inject constructor(private val context: AppCompatActivity) {
+class BiometricPromptManager(private val context: AppCompatActivity) {
 
     private val resultChannel = Channel<BiometricResult>()
     val promptResult = resultChannel.receiveAsFlow()

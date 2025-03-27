@@ -1,9 +1,7 @@
 package com.austinevick.noteapp.di
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
-import com.austinevick.noteapp.BiometricPromptManager
 import com.austinevick.noteapp.data.NoteDao
 import com.austinevick.noteapp.data.NoteDatabase
 import com.austinevick.noteapp.data.NoteRepository
@@ -44,12 +42,6 @@ object AppModule {
     @Singleton
     @Provides
     fun provideNotePreferences(@ApplicationContext context: Context) = NotePreferences(context)
-
-
-    @Singleton
-    @Provides
-    fun provideBiometricPromptManager(context: AppCompatActivity) =
-        BiometricPromptManager(context)
 
 }
 
